@@ -6,12 +6,12 @@ import { Gallery } from './ImageGallery.styled';
 export const ImageGallery = ({ images, handleImageClick }) => {
   return (
     <Gallery>
-      {images.map(({ id, webformatURL, LargeImageURL, tags }) => (
+      {images.map(({ id, webformatURL, largeImageURL, tags }) => (
         <ImageGalleryItem
           key={id}
           webformatURL={webformatURL}
           tags={tags}
-          onClick={() => handleImageClick(LargeImageURL)}
+          onClick={() => handleImageClick(largeImageURL)}
         />
       ))}
     </Gallery>

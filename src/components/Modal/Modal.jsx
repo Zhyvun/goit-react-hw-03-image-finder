@@ -16,7 +16,7 @@ export class Modal extends Component {
   componentWillUnmount() {
     console.log('Modal componentWillUnmount');
     window.removeEventListener('keydown', this.handleKeyDown);
-    document.body.style.overflow = 'auto'; // в принципі пофіг бо ми "підчистили" за собою
+    document.body.style.overflow = 'auto'; // в принципі ми "підчистили" за собою
   }
 
   handleKeyDown = event => {

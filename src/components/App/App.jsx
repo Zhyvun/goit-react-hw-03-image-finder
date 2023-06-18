@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { ToastContainer, toast } from 'react-toastify'; // https://www.npmjs.com/package/react-toastify
-import { Modal } from 'components/Modal/Modal';
-import { Searchbar } from 'components/Searchbar/Searchbar';
-import { Button } from 'components/Button/Button';
-import { ImageGallery } from 'components/ImageGallery/ImageGallery';
+import { Modal } from '../Modal/Modal';
+import { Searchbar } from '../Searchbar/Searchbar';
+import { Button } from '../Button/Button';
+import { ImageGallery } from '../ImageGallery/ImageGallery';
 import { Loader } from '../Loader/Loader';
 import { getImage } from '../UI/api';
 import { toastConfig } from '../UI/toastify';
@@ -15,9 +15,9 @@ export class App extends Component {
     largeImageURL: '',
     searchQuery: '',
     page: 1,
-    binder: [],
+    hits: [],
     loading: false,
-    totalBinder: 0,
+    totalHits: 0,
   };
 
   //задаємо параметри пошуку та номер сторінки
@@ -27,22 +27,22 @@ export class App extends Component {
     if (prevState.searchQuery !== searchQuery || prevState.page !== page) {
       this.setState({ loading: true }); // якщо не дорівнює (змінилось) дозволяємо пошук
       getImage(searchQuery, page) // шукаємо і передаємо нові значення
-        .then(({ binder: newBinder, totalBinder }) => {
-          if (this.state.searchQuery.trim() === '' || totalBinder === 0) {
+        .then(({ hits: newHits, totalHits }) => {
+          if (this.state.searchQuery.trim() === '' || totalHits === 0) {
             toast.error('Нашкрябай щось путнє 🙄', toastConfig); //перевірка на валідність запиту
             return;
           }
           if (
-            (prevState.binder.length === 0 &&
-              newBinder.length === totalBinder) ||
-            (prevState.binder.length !== 0 && newBinder.length < 12)
+            (prevState.hits.length === 0 &&
+              newHits.length === totalHits) ||
+            (prevState.hits.length !== 0 && newHits.length < 12)
           ) {
             toast.info('Все! Мультікі закінчились 😉', toastConfig); // перевірка на наявність нових зображень, якщо прийло менше 12 - фініш
           }
           // Виводимо нові сторінки із зображеннями що у запиті
           this.setState(prevState => ({
-            binder: [...prevState.binder, ...newBinder],
-            totalBinder,
+            hits: [...prevState.hits, ...newHits],
+            totalHits,
           }));
         })
         // Ловимо помилку
@@ -60,12 +60,12 @@ export class App extends Component {
     this.setState({
       searchQuery: searchValue,
       page: 1,
-      binder: [],
-      totalBinder: 0,
+      hits: [],
+      totalHits: 0,
     });
   };
 
-  //функція скролу
+  //функція додавання результатів
   handleLoadMore = () => {
     this.setState(prevState => ({ page: prevState.page + 1 }));
   };
@@ -76,14 +76,14 @@ export class App extends Component {
   };
 
   render() {
-    const { loading, binder, largeImageURL, totalBinder } = this.state;
-    const showLoadMoreBtn = !loading && binder.length !== totalBinder;
+    const { loading, hits, largeImageURL, totalHits } = this.state;
+    const showLoadMoreBtn = !loading && hits.length !== totalHits;
 
     return (
       <AppBox>
         <Searchbar onSearchSubmit={this.hendleSearchFormSubmit} />
-        {binder.length > 0 && (
-          <ImageGallery images={binder} handleImageClick={this.toggleModal} />
+        {hits.length > 0 && (
+          <ImageGallery images={hits} handleImageClick={this.toggleModal} />
         )}
         {showLoadMoreBtn && (
           <Button onClick={this.handleLoadMore} disabled={loading} />
