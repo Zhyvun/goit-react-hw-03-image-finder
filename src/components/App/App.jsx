@@ -25,26 +25,43 @@ export class App extends Component {
     const { searchQuery, page } = this.state; //дістаємо значення шо зараз є в поточному стані
 
     if (prevState.searchQuery !== searchQuery || prevState.page !== page) {
+      if (searchQuery.trim() === '') {
+        toast.error('ШО? ПРОБІЛ ЗАЛІП ? ....Почисть клаву 😜', toastConfig);
+        return;
+      }
       this.setState({ loading: true }); // якщо не дорівнює (змінилось) дозволяємо пошук
       getImage(searchQuery, page) // шукаємо і передаємо нові значення
         .then(({ hits: newHits, totalHits }) => {
           if (this.state.searchQuery.trim() === '' || totalHits === 0) {
-            toast.error('Нашкрябай щось путнє 🙄', toastConfig); //перевірка на валідність запиту
+            toast.error(
+              'Нашкрябай щось путнє 🙄... бо нічого НИМА 😲',
+              toastConfig
+            ); //перевірка на валідність запиту
             return;
           }
           if (
-            (prevState.hits.length === 0 &&
-              newHits.length === totalHits) ||
+            (prevState.hits.length === 0 && newHits.length === totalHits) ||
             (prevState.hits.length !== 0 && newHits.length < 12)
           ) {
             toast.info('Все! Мультікі закінчились 😉', toastConfig); // перевірка на наявність нових зображень, якщо прийло менше 12 - фініш
           }
+          // Вибираєм з масива об'єкта тільки ті властивості, які використовуємо
+          const filteredNewHits = newHits.map(
+            ({ id, webformatURL, largeImageURL, tags }) => ({
+              id,
+              webformatURL,
+              largeImageURL,
+              tags,
+            })
+          );
+
           // Виводимо нові сторінки із зображеннями що у запиті
           this.setState(prevState => ({
-            hits: [...prevState.hits, ...newHits],
+            hits: [...prevState.hits, ...filteredNewHits],
             totalHits,
           }));
         })
+
         // Ловимо помилку
         .catch(error => {
           console.error(error.response);

@@ -8,14 +8,12 @@ const modalRoot = document.querySelector('#modal-root');
 
 export class Modal extends Component {
   componentDidMount() {
-    console.log('Modal componentDidMout');
     window.addEventListener('keydown', this.handleKeyDown);
     document.body.style.overflow = 'hidden'; // за замовчуванням вікно сховано
   }
 
   componentWillUnmount() {
-    console.log('Modal componentWillUnmount');
-    window.removeEventListener('keydown', this.handleKeyDown);
+      window.removeEventListener('keydown', this.handleKeyDown);
     document.body.style.overflow = 'auto'; // в принципі ми "підчистили" за собою
   }
 
@@ -28,7 +26,6 @@ export class Modal extends Component {
   handleBackdropClick = event => {
     if (event.currentTarget === event.target) {
       this.props.onClose();
-      console.log('ky-ky');
     }
   };
 
